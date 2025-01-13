@@ -1,0 +1,34 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtual environment directories
+venv/
+env/
+
+# IDE or editor settings
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Log files
+*.log
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# Python-specific files
+*.egg-info/
+*.dist-info/
+
+# Database files
+*.sqlite3
+*.db
