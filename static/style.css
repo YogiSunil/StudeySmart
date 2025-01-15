@@ -142,3 +142,125 @@ footer p {
         opacity: 1;
     }
 }
+
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header nav a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+header nav a:hover {
+    color: #f1f1f1;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+}
+
+/* Form Styles */
+.form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Schedules List */
+.schedule-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+}
+
+.schedule-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    text-align: center;
+}
+
+.schedule-card i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #4CAF50;
+}
+
+.schedule-info h3 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.schedule-info p {
+    font-size: 14px;
+    color: #666;
+}
+
+.edit-btn {
+    display: block;
+    margin-top: 15px;
+    text-decoration: none;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.edit-btn:hover {
+    color: #45a049;
+}

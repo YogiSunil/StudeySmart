@@ -1,66 +1,42 @@
-from flask import Flask, render_template, jsonify, request
-from models import db, Schedule
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///schedules.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db.init_app(app)
+# In-memory schedule storage for demonstration
+schedules = []
 
 @app.route('/')
-def home():
-    return render_template('index.html')
+def index():
+    return render_template('index.html', schedules=schedules)
 
-@app.route('/api/schedules', methods=['GET'])
-def get_schedules():
-    schedules = Schedule.query.all()
-    return jsonify([{
-        'id': schedule.id,
-        'title': schedule.title,
-        'time': schedule.time,
-        'location': schedule.location,
-        'icon': schedule.icon
-    } for schedule in schedules])
+@app.route('/schedules/create', methods=['GET', 'POST'])
+def create_schedule():
+    if request.method == 'POST':
+        new_schedule = {
+            'id': len(schedules) + 1,
+            'title': request.form['title'],
+            'date': request.form['date'],
+            'time': request.form['time'],
+            'description': request.form['description'],
+            'icon': request.form['icon'],
+            'reminder': 'reminder' in request.form
+        }
+        schedules.append(new_schedule)
+        return redirect(url_for('index'))
+    return render_template('create_schedule.html')
 
-@app.route('/api/schedules', methods=['POST'])
-def add_schedule():
-    data = request.json
-    new_schedule = Schedule(
-        title=data['title'],
-        time=data['time'],
-        location=data['location'],
-        icon=data['icon']
-    )
-    db.session.add(new_schedule)
-    db.session.commit()
-    return jsonify({'message': 'Schedule added'}), 201
-
-@app.route('/api/schedules/<int:schedule_id>', methods=['PUT'])
-def update_schedule(schedule_id):
-    data = request.json
-    schedule = Schedule.query.get(schedule_id)
-    if not schedule:
-        return jsonify({'message': 'Schedule not found'}), 404
-
-    schedule.title = data['title']
-    schedule.time = data['time']
-    schedule.location = data['location']
-    db.session.commit()
-
-    return jsonify({'message': 'Schedule updated'})
-
-@app.route('/api/schedules/<int:schedule_id>', methods=['DELETE'])
-def delete_schedule(schedule_id):
-    schedule = Schedule.query.get(schedule_id)
-    if not schedule:
-        return jsonify({'message': 'Schedule not found'}), 404
-
-    db.session.delete(schedule)
-    db.session.commit()
-
-    return jsonify({'message': 'Schedule deleted'})
+@app.route('/schedules/edit/<int:schedule_id>', methods=['GET', 'POST'])
+def edit_schedule(schedule_id):
+    schedule = next((s for s in schedules if s['id'] == schedule_id), None)
+    if request.method == 'POST' and schedule:
+        schedule['title'] = request.form['title']
+        schedule['date'] = request.form['date']
+        schedule['time'] = request.form['time']
+        schedule['description'] = request.form['description']
+        schedule['icon'] = request.form['icon']
+        schedule['reminder'] = 'reminder' in request.form
+        return redirect(url_for('index'))
+    return render_template('edit_schedule.html', schedule=schedule)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)

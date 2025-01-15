@@ -1,23 +1,27 @@
-let editingScheduleId = null;  // Track if we're editing a schedule
+document.getElementById('schedule-form').addEventListener('submit', submitSchedule);
 
-function toggleScheduleForm(schedule = null) {
-    const formSection = document.getElementById('schedule-form-section');
-    const formTitle = document.getElementById('form-title');
-    
-    if (schedule) {
-        editingScheduleId = schedule.id;
-        formTitle.textContent = "Edit Schedule";
-        document.getElementById('title').value = schedule.title;
-        document.getElementById('time').value = schedule.time;
-        document.getElementById('location').value = schedule.location;
-        document.getElementById('description').value = schedule.description;
-    } else {
-        editingScheduleId = null;
-        formTitle.textContent = "Add New Schedule";
-        document.getElementById('schedule-form').reset();
-    }
+let editingScheduleId = null;
 
-    formSection.style.display = formSection.style.display === "none" ? "block" : "none";
+function fetchSchedules() {
+    fetch('/api/schedules')
+        .then(response => response.json())
+        .then(data => {
+            const list = document.getElementById('schedule-list');
+            list.innerHTML = '';
+            data.forEach(schedule => {
+                const li = document.createElement('li');
+                li.textContent = `${schedule.title} at ${schedule.time} in ${schedule.location}`;
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.onclick = () => editSchedule(schedule);
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteSchedule(schedule.id);
+                li.appendChild(editButton);
+                li.appendChild(deleteButton);
+                list.appendChild(li);
+            });
+        });
 }
 
 function submitSchedule(event) {
@@ -27,77 +31,49 @@ function submitSchedule(event) {
         title: document.getElementById('title').value,
         time: document.getElementById('time').value,
         location: document.getElementById('location').value,
-        description: document.getElementById('description').value,
+        icon: document.getElementById('icon').value,
+        reminder: document.getElementById('reminder').value,
+        recurrence: document.getElementById('recurrence').value,
+        timezone: document.getElementById('timezone').value,
     };
 
-    if (editingScheduleId) {
-        // Edit the existing schedule
-        fetch(`/api/schedules/${editingScheduleId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(scheduleData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            fetchSchedules();
-            toggleScheduleForm();
-        });
-    } else {
-        // Add a new schedule
-        fetch('/api/schedules', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(scheduleData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            fetchSchedules();
-            toggleScheduleForm();
-        });
-    }
-}
+    const url = editingScheduleId ? `/api/schedules/${editingScheduleId}` : '/api/schedules';
+    const method = editingScheduleId ? 'PUT' : 'POST';
 
-function fetchSchedules() {
-    fetch('/api/schedules')
-        .then(response => response.json())
-        .then(schedules => {
-            const scheduleList = document.getElementById('schedule-list');
-            scheduleList.innerHTML = '';
-            schedules.forEach(schedule => {
-                const item = document.createElement('div');
-                item.className = 'schedule-item';
-
-                item.innerHTML = `
-                    <i class="${schedule.icon}" style="font-size: 2em; margin-right: 15px;"></i>
-                    <div>
-                        <h3>${schedule.title}</h3>
-                        <p>${schedule.time}</p>
-                        <p>${schedule.location}</p>
-                        <p>${schedule.description}</p>
-                    </div>
-                    <button onclick="toggleScheduleForm(${schedule})">Edit</button>
-                    <button onclick="deleteSchedule(${schedule.id})">Delete</button>
-                `;
-                scheduleList.appendChild(item);
-            });
-        });
-}
-
-function deleteSchedule(id) {
-    fetch(`/api/schedules/${id}`, {
-        method: 'DELETE'
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(scheduleData)
     })
     .then(response => response.json())
     .then(data => {
         alert(data.message);
         fetchSchedules();
+        editingScheduleId = null;
+        document.getElementById('schedule-form').reset();
     });
+}
+
+function editSchedule(schedule) {
+    document.getElementById('title').value = schedule.title;
+    document.getElementById('time').value = schedule.time;
+    document.getElementById('location').value = schedule.location;
+    document.getElementById('icon').value = schedule.icon;
+    document.getElementById('reminder').value = schedule.reminder;
+    document.getElementById('recurrence').value = schedule.recurrence;
+    document.getElementById('timezone').value = schedule.timezone;
+    editingScheduleId = schedule.id;
+}
+
+function deleteSchedule(scheduleId) {
+    fetch(`/api/schedules/${scheduleId}`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            fetchSchedules();
+        });
 }
 
 fetchSchedules();
