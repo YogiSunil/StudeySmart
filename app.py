@@ -37,6 +37,11 @@ def edit_schedule(schedule_id):
         schedule['reminder'] = 'reminder' in request.form
         return redirect(url_for('index'))
     return render_template('edit_schedule.html', schedule=schedule)
+@app.route('/schedules/delete/<int:schedule_id>', methods=['POST'])
+def delete_schedule(schedule_id):
+    global schedules
+    schedules = [s for s in schedules if s['id'] != schedule_id]
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
