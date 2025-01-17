@@ -1,47 +1,40 @@
-// Select all schedule cards and columns where tasks can be dropped
-const cards = document.querySelectorAll('.schedule-card');
-const dayColumns = document.querySelectorAll('.day-column');
+document.addEventListener('DOMContentLoaded', function () {
+    // Attach event listener to all progress inputs (i.e., for task completion)
+    const progressInputs = document.querySelectorAll('.progress-input');
+    progressInputs.forEach(input => {
+        input.addEventListener('input', function () {
+            // Get the associated schedule ID from the input's data attribute
+            const scheduleId = input.getAttribute('data-schedule-id');
+            const progressValue = input.value;
 
-// Add event listeners for drag events on cards
-cards.forEach(card => {
-    card.addEventListener('dragstart', dragStart);
-    card.addEventListener('dragend', dragEnd);
+            // Send an AJAX request to update progress on the server
+            updateProgress(scheduleId, progressValue);
+        });
+    });
 });
 
-// Add event listeners for drag events on day columns
-dayColumns.forEach(column => {
-    column.addEventListener('dragover', dragOver);
-    column.addEventListener('drop', drop);
-});
+// Function to update progress using a POST request
+function updateProgress(scheduleId, progressValue) {
+    const formData = new FormData();
+    formData.append('progress', progressValue);
 
-// Function to handle when dragging starts
-function dragStart(e) {
-    // Store the ID of the dragged element
-    e.dataTransfer.setData('text', e.target.id);
-    e.target.classList.add('dragging');  // Add a class to the dragged item
-}
-
-// Function to handle when dragging ends
-function dragEnd(e) {
-    e.target.classList.remove('dragging');  // Remove the dragging class
-}
-
-// Function to allow dropping on a day column
-function dragOver(e) {
-    e.preventDefault();  // Prevent default to allow drop
-}
-
-// Function to handle the drop event
-function drop(e) {
-    e.preventDefault();
-    const cardId = e.dataTransfer.getData('text');  // Get the ID of the dragged card
-    const card = document.getElementById(cardId);
-    const newDay = e.target.id;  // Get the ID of the target column
-
-    // Send a POST request to move the schedule to a new day
-    fetch(`/schedules/move/${cardId}/${newDay}`, {
+    fetch(`/schedules/update-progress/${scheduleId}`, {
         method: 'POST',
-    }).then(response => {
-        location.reload();  // Reload the page after moving the task
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // After successful response, update the UI to reflect the new progress
+        const progressBar = document.querySelector(`#progress-bar-${scheduleId}`);
+        const progressText = document.querySelector(`#progress-text-${scheduleId}`);
+
+        // Update the progress bar width and text
+        if (progressBar && progressText) {
+            progressBar.style.width = `${progressValue}%`;
+            progressText.textContent = `${progressValue}%`;
+        }
+    })
+    .catch(error => {
+        console.error('Error updating progress:', error);
     });
 }

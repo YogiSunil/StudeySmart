@@ -12,12 +12,25 @@
                         <i class="{{ schedule.icon }}"></i>
                         <div class="schedule-info">
                             <h3>{{ schedule.title }}</h3>
-                            <p>{{ schedule.date }} | {{ schedule.time }}</p>
+                            <p>{{ schedule.date }} | {{ schedule.start_time }} - {{ schedule.end_time }}</p> <!-- Updated to show start and end times -->
                             {% if schedule.reminder %}
                                 <p><strong>Reminder: Set</strong></p>
                             {% endif %}
                             <p>{{ schedule.description }}</p>
                         </div>
+                        
+                        <!-- Progress bar and range input for task progress -->
+                        <div class="progress-container">
+                            <label for="progress-input-{{ schedule.id }}">Progress:</label>
+                            <input type="range" id="progress-input-{{ schedule.id }}" class="progress-input" 
+                                   data-schedule-id="{{ schedule.id }}" min="0" max="100" step="1" value="{{ schedule.progress }}">
+                            <div class="progress-bar-container">
+                                <div id="progress-bar-{{ schedule.id }}" style="width: {{ schedule.progress }}%; height: 20px; background-color: #4CAF50;"></div>
+                            </div>
+                            <p id="progress-text-{{ schedule.id }}">{{ schedule.progress }}%</p>
+                        </div>
+                        
+                        <!-- Task completion form -->
                         {% if not schedule.completed %}
                             <form action="{{ url_for('complete_schedule', schedule_id=schedule.id) }}" method="POST">
                                 <button type="submit" class="complete-btn">Complete Task</button>
@@ -26,7 +39,7 @@
                             <span class="completed">Completed</span>
                         {% endif %}
                         
-
+                        <!-- Edit and Delete buttons -->
                         <a href="{{ url_for('edit_schedule', schedule_id=schedule.id) }}" class="edit-btn">Edit</a>
                         <form action="{{ url_for('delete_schedule', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
                             <button type="submit" class="delete-btn">Delete</button>
@@ -37,11 +50,13 @@
         </div>
     {% endfor %}
 </div>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-<!-- Progress Bar and Summary -->
-<h3>Progress</h3>
-<div id="progress-bar" style="width: 100%; background-color: #f3f3f3; border: 1px solid #ccc;">
-    <div style="width: {{ completion_percentage }}%; height: 20px; background-color: #4CAF50;"></div>
+
+<!-- Overall Task Progress Bar -->
+<h3>Overall Task Progress</h3>
+<div id="overall-progress-bar" style="width: 100%; background-color: #f3f3f3; border: 1px solid #ccc;">
+    <div style="width: {{ progress_percentage }}%; height: 20px; background-color: #4CAF50;"></div>
 </div>
-<p>{{ completed_tasks }} of {{ total_tasks }} tasks completed ({{ completion_percentage }}%)</p>
+<p>{{ completed_tasks }} of {{ total_tasks }} tasks completed ({{ progress_percentage }}%)</p>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 {% endblock %}

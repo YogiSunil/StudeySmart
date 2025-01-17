@@ -35,3 +35,4 @@ bower_components/
 
 migrations/versions/*.py
 migrations/
+* text=auto
