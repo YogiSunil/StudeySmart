@@ -1,79 +1,47 @@
-document.getElementById('schedule-form').addEventListener('submit', submitSchedule);
+// Select all schedule cards and columns where tasks can be dropped
+const cards = document.querySelectorAll('.schedule-card');
+const dayColumns = document.querySelectorAll('.day-column');
 
-let editingScheduleId = null;
+// Add event listeners for drag events on cards
+cards.forEach(card => {
+    card.addEventListener('dragstart', dragStart);
+    card.addEventListener('dragend', dragEnd);
+});
 
-function fetchSchedules() {
-    fetch('/api/schedules')
-        .then(response => response.json())
-        .then(data => {
-            const list = document.getElementById('schedule-list');
-            list.innerHTML = '';
-            data.forEach(schedule => {
-                const li = document.createElement('li');
-                li.textContent = `${schedule.title} at ${schedule.time} in ${schedule.location}`;
-                const editButton = document.createElement('button');
-                editButton.textContent = 'Edit';
-                editButton.onclick = () => editSchedule(schedule);
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
-                deleteButton.onclick = () => deleteSchedule(schedule.id);
-                li.appendChild(editButton);
-                li.appendChild(deleteButton);
-                list.appendChild(li);
-            });
-        });
+// Add event listeners for drag events on day columns
+dayColumns.forEach(column => {
+    column.addEventListener('dragover', dragOver);
+    column.addEventListener('drop', drop);
+});
+
+// Function to handle when dragging starts
+function dragStart(e) {
+    // Store the ID of the dragged element
+    e.dataTransfer.setData('text', e.target.id);
+    e.target.classList.add('dragging');  // Add a class to the dragged item
 }
 
-function submitSchedule(event) {
-    event.preventDefault();
+// Function to handle when dragging ends
+function dragEnd(e) {
+    e.target.classList.remove('dragging');  // Remove the dragging class
+}
 
-    const scheduleData = {
-        title: document.getElementById('title').value,
-        time: document.getElementById('time').value,
-        location: document.getElementById('location').value,
-        icon: document.getElementById('icon').value,
-        reminder: document.getElementById('reminder').value,
-        recurrence: document.getElementById('recurrence').value,
-        timezone: document.getElementById('timezone').value,
-    };
+// Function to allow dropping on a day column
+function dragOver(e) {
+    e.preventDefault();  // Prevent default to allow drop
+}
 
-    const url = editingScheduleId ? `/api/schedules/${editingScheduleId}` : '/api/schedules';
-    const method = editingScheduleId ? 'PUT' : 'POST';
+// Function to handle the drop event
+function drop(e) {
+    e.preventDefault();
+    const cardId = e.dataTransfer.getData('text');  // Get the ID of the dragged card
+    const card = document.getElementById(cardId);
+    const newDay = e.target.id;  // Get the ID of the target column
 
-    fetch(url, {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(scheduleData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-        fetchSchedules();
-        editingScheduleId = null;
-        document.getElementById('schedule-form').reset();
+    // Send a POST request to move the schedule to a new day
+    fetch(`/schedules/move/${cardId}/${newDay}`, {
+        method: 'POST',
+    }).then(response => {
+        location.reload();  // Reload the page after moving the task
     });
 }
-
-function editSchedule(schedule) {
-    document.getElementById('title').value = schedule.title;
-    document.getElementById('time').value = schedule.time;
-    document.getElementById('location').value = schedule.location;
-    document.getElementById('icon').value = schedule.icon;
-    document.getElementById('reminder').value = schedule.reminder;
-    document.getElementById('recurrence').value = schedule.recurrence;
-    document.getElementById('timezone').value = schedule.timezone;
-    editingScheduleId = schedule.id;
-}
-
-function deleteSchedule(scheduleId) {
-    fetch(`/api/schedules/${scheduleId}`, { method: 'DELETE' })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            fetchSchedules();
-        });
-}
-
-fetchSchedules();

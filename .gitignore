@@ -32,3 +32,6 @@ bower_components/
 # Database files
 *.sqlite3
 *.db
+
+migrations/versions/*.py
+migrations/

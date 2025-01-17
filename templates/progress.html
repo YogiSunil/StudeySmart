@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Progress Summary</h2>
+<p>Total tasks: {{ total_tasks }}</p>
+<p>Completed tasks: {{ completed_tasks }}</p>
+<p>Completion percentage: {{ completion_percentage }}%</p>
+
+<div id="progress-bar" style="width: 100%; background-color: #f3f3f3; border: 1px solid #ccc;">
+    <div style="width: {{ completion_percentage }}%; height: 20px; background-color: #4CAF50;"></div>
+</div>
+{% endblock %}

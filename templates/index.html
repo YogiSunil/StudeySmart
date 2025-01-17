@@ -2,24 +2,46 @@
 
 {% block content %}
 <h2>Upcoming Schedules</h2>
-<div class="schedule-list">
-    {% for schedule in schedules %}
-        <div class="schedule-card">
-            <i class="{{ schedule.icon }}"></i>
-            <div class="schedule-info">
-                <h3>{{ schedule.title }}</h3>
-                <p>{{ schedule.date }} | {{ schedule.time }}</p>
-                {% if schedule.location %}
-                    - <strong>Location:</strong> {{ schedule.location }}
-                {% endif %}
-                <p>{{ schedule.description }}</p>
+<div class="week-schedule">
+    {% for day in ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] %}
+        <div class="day-column">
+            <h3>{{ day }}</h3>
+            <div class="schedule-list">
+                {% for schedule in schedules if schedule.day == day %}
+                    <div class="schedule-card" id="schedule-{{ schedule.id }}" draggable="true">
+                        <i class="{{ schedule.icon }}"></i>
+                        <div class="schedule-info">
+                            <h3>{{ schedule.title }}</h3>
+                            <p>{{ schedule.date }} | {{ schedule.time }}</p>
+                            {% if schedule.reminder %}
+                                <p><strong>Reminder: Set</strong></p>
+                            {% endif %}
+                            <p>{{ schedule.description }}</p>
+                        </div>
+                        {% if not schedule.completed %}
+                            <form action="{{ url_for('complete_schedule', schedule_id=schedule.id) }}" method="POST">
+                                <button type="submit" class="complete-btn">Complete Task</button>
+                            </form>
+                        {% else %}
+                            <span class="completed">Completed</span>
+                        {% endif %}
+                        
+
+                        <a href="{{ url_for('edit_schedule', schedule_id=schedule.id) }}" class="edit-btn">Edit</a>
+                        <form action="{{ url_for('delete_schedule', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </div>
+                {% endfor %}
             </div>
-            <a href="{{ url_for('edit_schedule', schedule_id=schedule.id) }}" class="edit-btn">Edit</a>
-            <!-- Add Delete Button -->
-            <form action="{{ url_for('delete_schedule', schedule_id=schedule.id) }}" method="POST" style="display: inline;">
-                <button type="submit" class="delete-btn">Delete</button>
-            </form>
         </div>
     {% endfor %}
 </div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<!-- Progress Bar and Summary -->
+<h3>Progress</h3>
+<div id="progress-bar" style="width: 100%; background-color: #f3f3f3; border: 1px solid #ccc;">
+    <div style="width: {{ completion_percentage }}%; height: 20px; background-color: #4CAF50;"></div>
+</div>
+<p>{{ completed_tasks }} of {{ total_tasks }} tasks completed ({{ completion_percentage }}%)</p>
 {% endblock %}

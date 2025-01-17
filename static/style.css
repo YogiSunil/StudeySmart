@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -7,6 +8,33 @@ body {
     color: #333;
 }
 
+/* Header Styles */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header nav a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+header nav a:hover {
+    color: #f1f1f1;
+}
+
+/* Navbar Styles */
 nav {
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     color: #fff;
@@ -42,11 +70,13 @@ nav ul li a:hover {
     color: #ffe259;
 }
 
+/* Main Section Styles */
 main {
     padding: 40px 20px;
     animation: fadeIn 1s ease-in-out;
 }
 
+/* Schedule Header */
 .schedule-header {
     display: flex;
     justify-content: space-between;
@@ -73,6 +103,7 @@ main {
     background: linear-gradient(90deg, #e52e71, #ff8a00);
 }
 
+/* Schedule List Styles */
 .schedule-list {
     display: grid;
     gap: 25px;
@@ -120,6 +151,7 @@ main {
     font-size: 0.95em;
 }
 
+/* Footer Styles */
 footer {
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     color: #fff;
@@ -134,6 +166,7 @@ footer p {
     font-size: 0.9em;
 }
 
+/* Keyframe for Fade-In Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -141,46 +174,6 @@ footer p {
     to {
         opacity: 1;
     }
-}
-
-/* Global Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-}
-
-header .logo {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-header nav a {
-    color: #fff;
-    margin: 0 10px;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-header nav a:hover {
-    color: #f1f1f1;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #333;
-    color: #fff;
 }
 
 /* Form Styles */
@@ -220,7 +213,7 @@ button:hover {
     background-color: #45a049;
 }
 
-/* Schedules List */
+/* Schedules List and Cards */
 .schedule-list {
     display: flex;
     flex-wrap: wrap;
@@ -264,6 +257,8 @@ button:hover {
 .edit-btn:hover {
     color: #45a049;
 }
+
+/* Delete Button Styles */
 .delete-btn {
     background-color: #f44336; /* Red background for delete */
     color: white;
@@ -276,4 +271,74 @@ button:hover {
 
 .delete-btn:hover {
     background-color: #d32f2f;
+}
+
+/* Weekly Schedule */
+.week-schedule {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: medium;
+}
+
+.day-column {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 5px;
+    min-width: 150px;
+}
+
+/* Schedule Card Hover Effect */
+.schedule-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.schedule-card:hover {
+    background-color: #f4f4f4;
+}
+
+.schedule-info {
+    margin-top: 10px;
+}
+
+/* Buttons for Completion and Deletion */
+.complete-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Completed Task Styling */
+.completed {
+    color: green;
+    font-weight: bold;
+}
+
+/* Progress Bar Styles */
+#progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    margin: 20px 0;
+}
+
+#progress-bar div {
+    height: 20px;
+    background-color: #4CAF50;
+    border-radius: 5px;
 }
